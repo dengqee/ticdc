@@ -363,7 +363,11 @@ func verifyChangefeedParamers(ctx context.Context, cmd *cobra.Command, isCreate 
 		info.Opts[key] = value
 	}
 
-	err = verifySink(ctx, info.SinkURI, info.Config, info.Opts)
+	sinkURI, err := url.Parse(info.SinkURI)
+	scheme := strings.ToLower(sinkURI.Scheme)
+	if scheme != "local" {
+		err = verifySink(ctx, info.SinkURI, info.Config, info.Opts)
+	}
 	if err != nil {
 		return nil, err
 	}
